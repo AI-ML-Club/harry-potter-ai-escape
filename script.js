@@ -1,67 +1,65 @@
 const missions = [
   {
-    title: "Enter the Castle",
-    icon: "🏰",
+    title: "The Owl Arrives",
+    icon: "🦉",
     description:
-      "Begin by predicting the next single token before asking ChatGPT.",
-    prompt: "Harry Potter walked into the...",
-    tasks: [
-      "Write your predicted next token.",
-      "Ask ChatGPT the exact same prompt.",
-      "Record ChatGPT's predicted token.",
-      "Briefly compare the two answers.",
-    ],
-  },
-  {
-    title: "The Great Hall",
-    icon: "🕯️",
-    description:
-      "The prompt now includes more context. Notice how the likely continuation changes.",
-    prompt: "Harry Potter walked into the Great Hall...",
+      "The story begins with very little context. Predict the next single token before asking ChatGPT.",
+    prompt: "Harry Potter received a...",
     tasks: [
       "Predict the next single token.",
       "Ask ChatGPT the exact same prompt.",
       "Record ChatGPT's predicted token.",
-      "Explain how the added context affected the prediction.",
+      "Compare your prediction with ChatGPT's.",
     ],
   },
   {
-    title: "The Story Continues",
+    title: "The Letter",
+    icon: "✉️",
+    description: "One extra word changes what the AI expects next.",
+    prompt: "Harry Potter received a mysterious...",
+    tasks: [
+      "Predict the next single token.",
+      "Ask ChatGPT the exact same prompt.",
+      "Record ChatGPT's predicted token.",
+      "Explain how adding one word changed the prediction.",
+    ],
+  },
+  {
+    title: "The Invitation",
     icon: "⚡",
-    description:
-      "One more word changes the sentence structure and may shift the most likely next token.",
-    prompt: "Harry Potter walked into the Great Hall and...",
+    description: "More context makes the next token even more predictable.",
+    prompt: "Harry Potter received a mysterious letter...",
     tasks: [
       "Predict the next single token.",
       "Ask ChatGPT the exact same prompt.",
       "Record ChatGPT's predicted token.",
-      "Explain why that token may be likely.",
+      "Explain why this prediction became more likely.",
     ],
   },
   {
-    title: "The Mysterious Book",
-    icon: "📖",
+    title: "The Journey Begins",
+    icon: "🚂",
     description:
-      "This prompt can continue in many ways. See whether ChatGPT chooses something expected or surprising.",
-    prompt: "Harry Potter opened the mysterious book and discovered...",
+      "The sentence keeps growing. Notice how each additional word changes the AI's expectations.",
+    prompt: "Harry Potter received a mysterious letter inviting...",
     tasks: [
       "Predict the next single token.",
       "Ask ChatGPT the exact same prompt.",
       "Record ChatGPT's predicted token.",
-      "Explain whether the answer surprised you.",
+      "Explain how the context influenced ChatGPT.",
     ],
   },
   {
     title: "Human vs. AI",
     icon: "🧙",
     description:
-      "Compare how you, another human, and ChatGPT continue the exact same prompt.",
-    prompt: "Harry Potter opened the mysterious book and discovered...",
+      "Now compare how another human and ChatGPT continue the exact same story.",
+    prompt: "Harry Potter received a mysterious letter inviting him...",
     tasks: [
-      "Write your own predicted next token.",
+      "Predict the next single token.",
       "Ask one friend or family member to predict the next token without AI.",
       "Ask ChatGPT the exact same prompt.",
-      "Compare all three answers and write a short reflection.",
+      "Compare all three predictions and write a short reflection.",
     ],
   },
 ];
@@ -117,10 +115,21 @@ function renderMission() {
 
     <p class="mission-description">${mission.description}</p>
 
-    <div class="prompt-box">
-      <div class="prompt-label">Use this exact prompt</div>
-      <p class="prompt-text">${mission.prompt}</p>
-    </div>
+<div class="prompt-box">
+  <div class="prompt-header">
+    <div class="prompt-label">Use this exact prompt</div>
+
+    <button
+      class="copy-btn"
+      id="copyPrompt"
+      type="button"
+    >
+      📋 Copy Prompt
+    </button>
+  </div>
+
+  <p class="prompt-text">${mission.prompt}</p>
+</div>
 
     <section class="task-section" aria-labelledby="taskHeading">
       <h3 class="task-heading" id="taskHeading">Your mission</h3>
@@ -129,36 +138,128 @@ function renderMission() {
       </ol>
     </section>
 
-    <div class="notice">
-      <span>
-        Your prediction does not need to match ChatGPT. Record what happened
-        in Google Classroom, then continue to the next mission.
-      </span>
+    <div class="checkpoint">
+  <div class="checkpoint-heading">
+    <span class="checkpoint-icon">🔐</span>
+    <div>
+      <h3>Mission Checkpoint</h3>
+      <p>Complete these checks to unlock the next mission.</p>
     </div>
+  </div>
 
-    <div class="actions">
-      <button
-        class="button secondary"
-        id="backButton"
-        type="button"
-        ${currentMission === 0 ? "disabled" : ""}
-      >
-        ← Previous mission
-      </button>
+  <label class="check-row">
+    <input type="checkbox" class="mission-check" />
+    <span>I predicted the next token before asking ChatGPT.</span>
+  </label>
 
-      <button
-        class="button primary"
-        id="nextButton"
-        type="button"
-      >
-        ${
-          currentMission === missions.length - 1
-            ? "Finish challenge ✦"
-            : "Reveal next mission →"
-        }
-      </button>
-    </div>
+  <label class="check-row">
+    <input type="checkbox" class="mission-check" />
+    <span>I used the exact prompt shown above.</span>
+  </label>
+
+  <label class="token-check">
+    <span>What single token did ChatGPT predict?</span>
+    <input
+      type="text"
+      id="temporaryToken"
+      maxlength="30"
+      autocomplete="off"
+      placeholder="Enter one token"
+    />
+    <small>This answer is not saved or submitted by this website.</small>
+  </label>
+
+  <label class="check-row">
+    <input type="checkbox" class="mission-check" />
+    <span>
+      I recorded my work in my Google Doc or Word document under
+      <strong>Mission #${currentMission + 1}</strong>.
+    </span>
+  </label>
+
+  <p class="checkpoint-message" id="checkpointMessage">
+    Finish all four checks to continue.
+  </p>
+</div>
+
+<div class="notice">
+  Your prediction does not need to match ChatGPT. Record what happened,
+  complete the checkpoint, and then continue.
+</div>
+
+<div class="actions">
+  <button
+    class="button secondary"
+    id="backButton"
+    type="button"
+    ${currentMission === 0 ? "disabled" : ""}
+  >
+    ← Previous mission
+  </button>
+
+  <button
+    class="button primary"
+    id="nextButton"
+    type="button"
+    disabled
+  >
+    ${
+      currentMission === missions.length - 1
+        ? "Finish challenge ✦"
+        : "Unlock next mission →"
+    }
+  </button>
+</div>
   `;
+
+  const copyButton = document.getElementById("copyPrompt");
+
+  copyButton.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(mission.prompt);
+
+      copyButton.innerHTML = "✅ Copied!";
+
+      setTimeout(() => {
+        copyButton.innerHTML = "📋 Copy Prompt";
+      }, 1800);
+    } catch {
+      copyButton.innerHTML = "❌ Failed";
+
+      setTimeout(() => {
+        copyButton.innerHTML = "📋 Copy Prompt";
+      }, 1800);
+    }
+  });
+
+  const checkpointBoxes = [...document.querySelectorAll(".mission-check")];
+
+  const temporaryToken = document.getElementById("temporaryToken");
+  const nextButton = document.getElementById("nextButton");
+  const checkpointMessage = document.getElementById("checkpointMessage");
+
+  function validateCheckpoint() {
+    const allChecked = checkpointBoxes.every((box) => box.checked);
+    const tokenEntered = temporaryToken.value.trim().length > 0;
+    const checkpointComplete = allChecked && tokenEntered;
+
+    nextButton.disabled = !checkpointComplete;
+
+    checkpointMessage.textContent = checkpointComplete
+      ? "✓ Mission recorded. The next mission is unlocked."
+      : "Finish all four checks to continue.";
+
+    checkpointMessage.classList.toggle(
+      "checkpoint-complete",
+      checkpointComplete,
+    );
+  }
+
+  checkpointBoxes.forEach((box) => {
+    box.addEventListener("change", validateCheckpoint);
+  });
+
+  temporaryToken.addEventListener("input", validateCheckpoint);
 
   document.getElementById("backButton").addEventListener("click", () => {
     if (currentMission === 0) return;
